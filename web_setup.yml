@@ -89,7 +89,7 @@
     notify: 'Reinciar apache Ubuntu'
     when: ansible_os_family == "Debian"
 
-  - name: Tenemos directorio exitente para configurar el vhost CentOS
+  - name: Tenemos directorio existente para configurar el vhost CentOS
     ansible.builtin.file:
       path: /etc/httpd/vhost.d
       state: directory
