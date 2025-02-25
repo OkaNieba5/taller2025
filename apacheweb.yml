@@ -1,0 +1,122 @@
+---
+
+- name: Desplegar un apache web server en CentOS y Ubuntu Server
+  hosts: all
+  become: true
+
+  tasks:
+
+  - name: Instalar Apache-httpd en CentOS
+    ansible.builtin.dnf:
+      name: httpd
+      state: present
+    when: ansible_os_family == "RedHat"
+
+  - name: Instalar Apache-apache2 en Ubuntu server
+    ansible.builtin.apt:
+      name: apache2
+      state: present
+    when: ansible_os_family == "Debian"
+
+  - name: Servicio de apache inciado y habilitado CentOS
+    ansible.builtin.systemd_service:
+      name: httpd
+      state: started
+      enabled: true
+    when: ansible_os_family == "RedHat"
+
+  - name: Servicio de apache inciado y habilitado Ubuntu Server
+    ansible.builtin.systemd_service:
+      name: apache2
+      state: started
+      enabled: true
+    when: ansible_os_familty == "Debian"
+
+  - name: Agregar acceso por http a firewalld
+    ansible.posix.firewalld:
+      service: http
+      state: enabled
+      permanent: true
+      inmediate: true
+    when: ansible_os_family == "RedHat"
+
+  - name: Agregar acceso por http a ufw
+    ansible.posix.ufw:
+      rule: allow
+      port: '80'
+      proto: tcp
+    when: ansible_os_family == "Debian"
+
+  - name: Agregar el registro del archivo host en nuestro equipo
+    ansible.builtin.lineinfile:
+      path: /etc/hosts
+      line: "{{ item }}"
+      state: present
+    loop:
+      - "192.168.56.41 www.{{ virtual_server }}.com"
+      - "192.168.56.40 www.{{ virtual_server }}.com"
+
+  - name: Modificar config de apache CentOS
+    ansible.buiultin.lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      line: "IncludeOptional /etc/httpd/vhost.d/*.conf"
+    notify: Reinciar apache CentOS
+    when: ansible_os_family == "RedHat"
+
+  - name: Modificar config de apache en Ubuntu
+    ansible.builtin.lineinfile:
+      path: /etc/apache2/apache2.conf
+      line: "IncludeOptional sites-enabled/*.conf"
+    notify: Reinciar apache Ubuntu
+    when: ansible_os_family == "Debian"
+
+  - name: Tenemos directorio exitente para configurar el vhost CentOS
+    ansible.builtin.file:
+      path: /etc/httpd/vhost.d
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'
+    when: ansible_os_family == "RedHat"
+
+  - name: Tenemos directorio existente para configurar el vhost - Ubuntu
+    ansible.builtin.file:
+      path: /etc/apache2/sites-available/
+      state: directory
+      owner: root
+      group: root
+      mode: '0755'
+    when: ansible_os_family == "Debian"
+
+  - name: Existe directorio para alojar el sitio CentOS
+    ansible.builtin.file:
+      path: "/var/www/{{ virtual_server }}/html"
+      state: directory
+      owner: apache
+      group: apache
+      mode: '0755'
+    when: ansible_os_family == "RedHat"
+
+  - name: Existe directorio para alojar el sitio
+    ansible.builtin.file:
+      path: "/var/www/{{ virtual_server }}/html"
+      state: directory
+      owner: www-data
+      group: www-data
+      mode: '0755'
+    when: ansible_os_family == "Debian" 
+  
+  handlers:
+
+  - name: Reinciar apache CentOS
+    ansible.builtin.systemd_service:
+      name: httpd
+      state: restarted
+    when: ansible_os_family == "RedHat"
+
+  - name: Reinciar apache Ubuntu
+    ansible.builtin.systemd_service:
+      name: apache2
+      state: restarted
+    when: ansible_os_family == "Debian"
+
