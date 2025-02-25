@@ -1,8 +1,8 @@
 # Obligatorio Taller ASLX 2025
 
-Utilizaremos este reposotiorio para demostrar conocimientos basicos de Ansible junto a Ubuntu Server 24.04 y CentOS stream 9.
+Utilizaremos este repositorio para demostrar conocimientos básicos de Ansible junto a Ubuntu Server 24.04 y CentOS stream 9.
 
-## Instalacion de Ansible en Linux
+## Instalación de Ansible en Linux
 
 Necesitaremos los siguientes paquetes:
 
