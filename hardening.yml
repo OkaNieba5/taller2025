@@ -19,12 +19,11 @@
       state: enabled
 
   - name: Chequear que la clave SSH publica este para el usuario sysadmin
-    ansible.builtin.stat:
-      stat: 
-        path: /etc/home/sysadmin/.ssh/authorized_keys
-      register: authorized_keys_stat
+    ansible.builtin.stat: 
+        path: '/home/sysadmin/.ssh/authorized_keys'
+    register: authorized_keys_stat
   
-  - name: La existe key no esta presente para el usuario sysadmin
+  - name: La existe key esta presente para el usuario sysadmin
     ansible.builtin.debug:
       msg: "La clave publica existe para el usuario sysadmin"
     when: authorized_keys_stat.stat.exists
@@ -36,7 +35,7 @@
 
   - name: Asegurar que el login al servidor sea solo mediante SSH
     ansible.builtin.lineinfile:
-      path: /etc/ssh/sshd_config
+      path: '/etc/ssh/sshd_config'
       line: |
         PassswordAuthentication no
         ChallengeResponseAuthentication no
