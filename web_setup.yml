@@ -29,14 +29,14 @@
       name: apache2
       state: started
       enabled: true
-    when: ansible_os_familty == "Debian"
+    when: ansible_os_family == "Debian"
 
   - name: Agregar acceso por http a firewalld
     ansible.posix.firewalld:
       service: http
       state: enabled
       permanent: true
-      inmediate: true
+      immediate: true
     when: ansible_os_family == "RedHat"
 
   - name: Agregar acceso por http a ufw
@@ -79,14 +79,14 @@
     ansible.builtin.lineinfile:
       path: /etc/httpd/conf/httpd.conf
       line: "IncludeOptional /etc/httpd/vhost.d/*.conf"
-    notify: Reinciar apache CentOS
+    notify: 'Reinciar apache CentOS'
     when: ansible_os_family == "RedHat"
 
   - name: Modificar config de apache en Ubuntu
     ansible.builtin.lineinfile:
       path: /etc/apache2/apache2.conf
       line: "IncludeOptional sites-enabled/*.conf"
-    notify: Reinciar apache Ubuntu
+    notify: 'Reinciar apache Ubuntu'
     when: ansible_os_family == "Debian"
 
   - name: Tenemos directorio exitente para configurar el vhost CentOS
@@ -132,7 +132,7 @@
       owner: root
       group: root
       mode: '0644'
-    notify: Reiniciar apache CentOS
+    notify: 'Reiniciar apache CentOS'
     when: ansible_os_family == "RedHat"
   
   - name: Configuracion de virtual host Ubuntu
@@ -142,15 +142,15 @@
       owner: www-data
       group: www-data
       mode: '0644'
-    notify: Reiniciar apache Ubuntu
+    notify: 'Reiniciar apache Ubuntu'
     when: ansible_os_family == "Debian"
 
   - name: Habilitar vhost con symlink en Ubuntu
     ansible.builtin.file:
       src: "/etc/apache2/sites-available/{{ virtual_server }}.conf"
-      dest: "etc/apache2/sites-enabled/{{ virtual_server }}.conf"
+      dest: "/etc/apache2/sites-enabled/{{ virtual_server }}.conf"
       state: link
-    notify: Reinciar apache Ubuntu
+    notify: 'Reinciar apache Ubuntu'
     when: ansible_os_family == "Debian"
   
   - name: Existe un archivo indice estandarizado CentOS
@@ -184,4 +184,3 @@
       name: apache2
       state: restarted
     when: ansible_os_family == "Debian"
-
