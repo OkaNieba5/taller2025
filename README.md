@@ -13,7 +13,7 @@ Necesitaremos los siguientes paquetes:
 		5. pipx inject ansible-core argcomplete (Autocompletado)
 		6. pipx inject ansible-core ansible-lint (Analisis de sintaxis)
 		7. activate-global-python-argcomplete --user
-        8. . /home/user_home_name/.bash_completion (Recargados los cambios en el bash)
+                8. . /home/user_home_name/.bash_completion (Recargados los cambios en el bash)
 
 ## Objetivos
 
