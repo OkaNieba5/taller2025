@@ -1,5 +1,4 @@
 ---
-
 - name: Desplegar un apache web server en CentOS y Ubuntu Server
   hosts: all
   become: true
@@ -55,6 +54,26 @@
     loop:
       - "192.168.56.41 www.{{ virtual_server }}.com"
       - "192.168.56.40 www.{{ virtual_server }}.com"
+    delegate_to: localhost
+    connection: local
+
+  - name: Pagina index desde la plantilla - CentOS
+    ansible.builtin.template:
+      src: ./Templates/indexhtml.j2
+      dest: /var/www/html/index.html
+      owner: apache
+      group: apache
+      mode: '0644'
+    when: ansible_os_family == "RedHat"
+
+  - name: Pagina index desde la plantilla - Ubuntu
+    ansible.builtin.template:
+      src: ./Templates/indexhtml.j2
+      dest: /var/www/html/index.html   
+      owner: www-data
+      group: www-data
+      mode: '0644'
+    when: ansible_os_family == "Debian"
 
   - name: Modificar config de apache CentOS
     ansible.buiultin.lineinfile:
@@ -97,7 +116,7 @@
       mode: '0755'
     when: ansible_os_family == "RedHat"
 
-  - name: Existe directorio para alojar el sitio
+  - name: Existe directorio para alojar el sitio Ubuntu
     ansible.builtin.file:
       path: "/var/www/{{ virtual_server }}/html"
       state: directory
@@ -106,6 +125,44 @@
       mode: '0755'
     when: ansible_os_family == "Debian" 
   
+  - name: Configuracion de virtual host CentOS
+    ansible.builtin.template:
+      src: ./Templates/vhost.j2
+      dest: "/etc/httpd/vhost.d/{{ virtual_server }}.conf"
+      owner: root
+      group: root
+      mode: '0644'
+    notify: Reiniciar apache CentOS
+    when: ansible_os_family == "RedHat"
+  
+  - name: Configuracion de virtual host Ubuntu
+    ansible.builtin.template:
+      src: ./Templates/vhost.j2
+      dest: "/etc/httpd/vhost.d/{{ virtual_server }}.conf"
+      owner: www-data
+      group: www-data
+      mode: '0644'
+    notify: Reiniciar apache Ubuntu
+    when: ansible_os_family == "Debian"
+  
+  - name: Existe un archivo indice estandarizado CentOS
+    ansible.builtin.template:
+      src: ./Templates/indexhtml.j2
+      dest: /var/www/{{ virtual_server }}/html/index.html"
+      owner: apache
+      group: apache
+      mode: '0644'
+    when: ansible_os_family == "RedHat"
+
+  - name: Existe un archivo indice estandarizado Ubuntu
+    ansible.builtin.template:
+      src: ./Templates/indexhtml.j2
+      dest: /var/www/{{ virtual_server }}/html/index.html"
+      owner: www-data
+      group: www-data
+      mode: '0644'
+    when: ansible_os_family == "Debian"
+      
   handlers:
 
   - name: Reinciar apache CentOS
