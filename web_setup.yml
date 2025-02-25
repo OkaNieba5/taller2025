@@ -138,11 +138,19 @@
   - name: Configuracion de virtual host Ubuntu
     ansible.builtin.template:
       src: ./Templates/vhost.j2
-      dest: "/etc/httpd/vhost.d/{{ virtual_server }}.conf"
+      dest: "/etc/apache2/sites-available/{{ virtual_server }}.conf"
       owner: www-data
       group: www-data
       mode: '0644'
     notify: Reiniciar apache Ubuntu
+    when: ansible_os_family == "Debian"
+
+  - name: Habilitar vhost con symlink en Ubuntu
+    ansible.builtin.file:
+      src: "/etc/apache2/sites-available/{{ virtual_server }}.conf"
+      dest: "etc/apache2/sites-enabled/{{ virtual_server }}.conf"
+      state: link
+    notify: Reinciar apache Ubuntu
     when: ansible_os_family == "Debian"
   
   - name: Existe un archivo indice estandarizado CentOS

@@ -1,0 +1,46 @@
+---
+- name: Hardening en servidores Ubuntu
+  hosts: ubuntu-srv2
+  become: true
+
+  tasks:
+
+  - name: Habilitar ufw
+    community.general.ufw:
+      state: enabled
+      policy: deny
+      direction: incoming
+
+  - name: Permitir trafico SSH
+    community.general.ufw:
+      rule: allow
+      port: '22'
+      proto: tcp
+      state: enabled
+
+  - name: Chequear que la clave SSH publica este para el usuario sysadmin
+    ansible.builtin.stat:
+      stat: 
+        path: /etc/home/sysadmin/.ssh/authorized_keys
+      register: authorized_keys_stat
+  
+  - name: La existe key no esta presente para el usuario sysadmin
+    ansible.builtin.debug:
+      msg: "La clave publica existe para el usuario sysadmin"
+    when: authorized_keys_stat.stat.exists
+
+  - name: No existe la clave publica para el usuario sysadmin
+    ansible.builtin.debug:
+      msg: " La clave ssh no existe para el usuario sysadmin "
+    when: not authorized_keys_stat.stat.exists
+
+  - name: Asegurar que el login al servidor sea solo mediante SSH
+    ansible.builtin.lineinfile:
+      path: /etc/ssh/sshd_config
+      line: |
+        PassswordAuthentication no
+        ChallengeResponseAuthentication no
+        UsePAM no
+      regexp: '^(PasswordAuthenticacion|ChallengeResponseAuthentication|UsePAM)'
+      state: present
+      backup: true
