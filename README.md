@@ -14,6 +14,7 @@ Necesitaremos los siguientes paquetes:
 		6. pipx inject ansible-core ansible-lint (Analisis de sintaxis)
 		7. activate-global-python-argcomplete --user
                 8. ./home/user_home_name/.bash_completion (Recargados los cambios en el bash)
+		9. ansible-galaxy collection install community.general
 
   Adicionalmente debemos configurar las claves SSH en cada uno de las VM a usar. Lo daremos por alto pero aqui estaria la configuracion en caso de ser necesaria(fragmento del documento "Preparacion del laboratorio" en Aulas):
 
