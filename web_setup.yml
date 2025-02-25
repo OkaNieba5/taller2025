@@ -40,7 +40,7 @@
     when: ansible_os_family == "RedHat"
 
   - name: Agregar acceso por http a ufw
-    ansible.posix.ufw:
+    community.general.ufw:
       rule: allow
       port: '80'
       proto: tcp
@@ -76,7 +76,7 @@
     when: ansible_os_family == "Debian"
 
   - name: Modificar config de apache CentOS
-    ansible.buiultin.lineinfile:
+    ansible.builtin.lineinfile:
       path: /etc/httpd/conf/httpd.conf
       line: "IncludeOptional /etc/httpd/vhost.d/*.conf"
     notify: Reinciar apache CentOS
