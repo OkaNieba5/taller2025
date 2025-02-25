@@ -6,35 +6,31 @@ Utilizaremos este reposotiorio para demostrar conocimientos basicos de Ansible j
 
 Necesitaremos los siguientes paquetes:
 
+		1. sudo dnf install python-pip
+		2. pip install pipx
+		3. pipx ensurepath
+		4. pipx install ansible-core
+		5. pipx inject ansible-core argcomplete (Autocompletado)
+		6. pipx inject ansible-core ansible-lint (Analisis de sintaxis)
+		7. activate-global-python-argcomplete --user
+        8. . /home/user_home_name/.bash_completion (Recargados los cambios en el bash)
+
+## Objetivos
+
+1. Objetivo
+El objetivo básico del obligatorio es aplicar los conocimientos básicos de Ansible sobre dos
+distribuciones Linux: Centos Stream 9 y Ubuntu 24.04.
+2. Tareas
+Completa todas las tareas usando un repositorio GIT y envíar el trabajo como un archivo
+ZIP que contenga:
 
 
+- El archivo de inventario
+- Playbooks de Ansible
+- Capturas de pantalla o registros de ejecución
+- Una breve reflexión sobre los desafíos encontrados
 
-```bash
-pip install foobar
-```
 
-## Usage
+## Licencia
 
-```python
-import foobar
-
-# returns 'words'
-foobar.pluralize('word')
-
-# returns 'geese'
-foobar.pluralize('goose')
-
-# returns 'phenomenon'
-foobar.singularize('phenomena')
-```
-
-## Contributing
-
-Pull requests are welcome. For major changes, please open an issue first
-to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
+CCO 1.0
